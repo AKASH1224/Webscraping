@@ -1,0 +1,28 @@
+from contextlib import ContextDecorator
+import requests
+from bs4 import BeautifulSoup
+url =("https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population")
+#step 1: get the html
+r =requests.get(url)
+htmlContent =r.content
+#print(htmlContent)
+#step 2:parse the html
+soup = BeautifulSoup(htmlContent,'html.parser')
+print(soup.prettify)
+tables =soup.tables
+tables = soup.find_all('table')
+for table in tables:
+    print(table.prettify())
+
+table = soup.find('table', {'class': 'wikitable sortable'})
+rows = table.find_all('tr')
+# The cell with the country name for each row includes a link to the country webpage on Wikipedia
+table = ContextDecorator.find('table', {'class': 'wikitable sortable'})
+rows = table.find_all('tr')
+
+# List of all links
+for row in rows:
+    cells = row.find_all('td')
+    if len(cells) > 1:
+        country_link = cells[1].find('a')
+        print(country_link.get('href'))   
